@@ -1,11 +1,13 @@
 server:
   port: 8080
+
 spring:
   datasource:
-    url: jdbc:mysql://192.168.1.6:3306/zzw
-    username: root
-    password: gnova2017!@#
     type: com.alibaba.druid.pool.DruidDataSource
+  profiles:
+    active: company
+
 logging:
   level:
     root: info
+
