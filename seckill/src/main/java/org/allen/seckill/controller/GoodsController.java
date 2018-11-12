@@ -25,4 +25,8 @@ public class GoodsController {
         return ResponseVO.fail();
     }
 
+    @RequestMapping("monitor")
+    public String monitor() {
+        return "OK";
+    }
 }

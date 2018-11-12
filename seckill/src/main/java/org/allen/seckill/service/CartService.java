@@ -16,4 +16,8 @@ public class CartService {
     public boolean addOneToCart(int stockId, int userId) {
         return cartDAO.addOneStock(stockId, userId) > 0;
     }
+
+    public boolean checkAlreadyInCart(int stockId, int userId) {
+        return cartDAO.selectCount(stockId, userId) > 0;
+    }
 }

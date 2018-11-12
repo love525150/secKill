@@ -20,6 +20,10 @@ public class GoodsService {
     @Transactional
     public boolean buyOne(int stockId) {
         int userId = userService.getUserId();
+        boolean alreadyInCart = cartService.checkAlreadyInCart(stockId, userId);
+        if (alreadyInCart) {
+            return false;
+        }
         int reduceStock = goodsDAO.reduceOneStock(stockId);
         if (reduceStock > 0) {
             cartService.addOneToCart(stockId, userId);

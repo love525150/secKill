@@ -12,6 +12,7 @@ public class UserService {
 
     public int getUserId() {
         Random random = new Random();
-        return random.nextInt(100);
+        int userId = random.nextInt(100);
+        return userId;
     }
 }
