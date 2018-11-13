@@ -1,10 +1,7 @@
 package org.allen.seckill.dao;
 
 import org.allen.seckill.model.CartModel;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 public interface CartDAO {
 
@@ -16,4 +13,7 @@ public interface CartDAO {
 
     @Select("select count(1) from t_cart where stockId = #{stockId} and userId = #{userId}")
     int selectCount(@Param("stockId") int stockId, @Param("userId") int userId);
+
+    @Delete("delete from t_cart where stockId = #{stockId}")
+    int deleteStock(@Param("stockId") int stockId);
 }
