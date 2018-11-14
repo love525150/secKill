@@ -1,6 +1,8 @@
 package org.allen.seckill.service;
 
 import org.allen.seckill.common.CommonSettings;
+import org.allen.seckill.config.StockConfig;
+import org.allen.seckill.dao.CartDAO;
 import org.allen.seckill.dao.GoodsDAO;
 import org.allen.seckill.util.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
@@ -16,7 +19,7 @@ import javax.annotation.Resource;
 @Service
 public class GoodsService {
     @Autowired
-    private GoodsDAO goodsDAO;
+    private CartDAO cartDAO;
     @Autowired
     private CartService cartService;
     @Autowired
@@ -27,6 +30,10 @@ public class GoodsService {
     private StringRedisTemplate stringRedisTemplate;
 
     public boolean buyOne(int stockId) {
+        Boolean hasRemain = StockConfig.STOCK_REMAIN.getOrDefault(stockId, true);
+        if (!hasRemain) {
+            return false;
+        }
         int userId = userService.getUserId();
         long start = System.currentTimeMillis();
         boolean newAdded = goodsRedisService.addToAlreadyBuy(userId);
@@ -39,6 +46,7 @@ public class GoodsService {
             long remainNum = goodsRedisService.reduceGoodsStockByOne(stockId);
             System.out.println("扣减库存耗时：" + (System.currentTimeMillis() - start));
             if (remainNum < 0) {
+                StockConfig.STOCK_REMAIN.put(stockId, false);
                 return false;
             } else {
                 start = System.currentTimeMillis();
@@ -56,5 +64,18 @@ public class GoodsService {
         ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
         String key = RedisUtils.keyGenarator(CommonSettings.REDIS_PREFIX, stockId);
         valueOperations.set(key, String.valueOf(stockNum));
+    }
+
+    public void prepareForSecKill(int stockId, int stockNum) {
+        createStockInRedis(stockId, stockNum);
+        String num = stringRedisTemplate.opsForValue().get(RedisUtils.keyGenarator(CommonSettings.REDIS_PREFIX, stockId));
+        cartDAO.deleteStock(stockId);
+        stringRedisTemplate.delete(RedisUtils.keyGenarator(CommonSettings.REDIS_PREFIX, CommonSettings.USER_SET_KEY));
+        System.out.println("秒杀商品初始化成功");
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        prepareForSecKill(1, 10);
     }
 }

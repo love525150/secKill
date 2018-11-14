@@ -39,7 +39,7 @@ public class GoodsServiceTest {
     public void test() {
         /*String key = RedisUtils.keyGenarator(CommonSettings.REDIS_PREFIX, 1);
         Long value = stringRedisTemplate.opsForValue().decrement(key);*/
-        long start = System.currentTimeMillis();
+        /*long start = System.currentTimeMillis();
         for (int i = 0; i < 1000; i++) {
             Long value = stringRedisTemplate.opsForSet().add(RedisUtils.keyGenarator(CommonSettings.REDIS_PREFIX, CommonSettings.USER_SET_KEY), String.valueOf(99999));
         }
@@ -48,7 +48,8 @@ public class GoodsServiceTest {
         for (int i = 0; i < 1000; i++) {
             String num = stringRedisTemplate.opsForValue().get(RedisUtils.keyGenarator(CommonSettings.REDIS_PREFIX, 1));
         }
-        System.out.println(System.currentTimeMillis() - start);
+        System.out.println(System.currentTimeMillis() - start);*/
+
     }
 
 }
